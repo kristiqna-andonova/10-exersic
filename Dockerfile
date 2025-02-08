@@ -1,25 +1,20 @@
-# Use the official Node.js image as the base image
-# Use the official Node.js image as a parent image
-FROM node:16
+# Use the official Node.js 14 image as a parent image
+FROM node:14
 
-# Set the working directory in the container
+# Set the working directory inside the container to /app
 WORKDIR /app
 
-# Copy the package.json and package-lock.json (or yarn.lock) files first to leverage caching
+# Copy package.json and package-lock.json files into the container at /app
 COPY package*.json ./
 
-# Install dependencies
+# Install dependencies in the container
 RUN npm install
 
-# Copy the rest of your application code
+# Copy the rest of your app's source code from your host to your image filesystem.
 COPY . .
 
-# Expose the port the app will run on
+# Expose the port the app runs on
 EXPOSE 8080
 
-# Define environment variable if needed
-ENV NODE_ENV=production
-
-# Run the app when the container starts
-CMD ["npm", "start"]
-
+# Define the command to run your app using CMD which defines your runtime
+CMD [ "npm", "start" ]
