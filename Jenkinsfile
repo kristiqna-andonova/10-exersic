@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        NODE_VERSION = '16' // Change this to your desired Node.js version
+        NODE_VERSION = '16' // Desired Node.js version
     }
 
     stages {
@@ -12,37 +12,58 @@ pipeline {
             }
         }
 
-    stage('Set Up Node.js') {
-        steps {
-            sh 'curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash'
-            sh 'export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" && nvm install 16 && nvm use 16'
+        stage('Set Up Node.js') {
+            steps {
+                sh '''
+                    curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+                    export NVM_DIR="$HOME/.nvm"
+                    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+                    nvm install 16
+                    nvm use 16
+                '''
+            }
         }
 
-    stage('Install Dependencies') {
-        steps {
-            sh 'npm install'
+        stage('Install Dependencies') {
+            steps {
+                sh '''
+                    export NVM_DIR="$HOME/.nvm"
+                    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+                    nvm use 16
+                    npm install
+                '''
+            }
         }
-    }
 
-    stage('Start Application') {
-        steps {
-            sh 'npm start &'
+        stage('Start Application') {
+            steps {
+                sh '''
+                    export NVM_DIR="$HOME/.nvm"
+                    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+                    nvm use 16
+                    npm start &
+                '''
+            }
         }
-    }
 
-    stage('Run Tests') {
-        steps {
-            sh 'npm test'
+        stage('Run Tests') {
+            steps {
+                sh '''
+                    export NVM_DIR="$HOME/.nvm"
+                    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+                    nvm use 16
+                    npm test
+                '''
+            }
         }
     }
-}
 
     post {
         success {
-            echo 'Build completed successfully! 🎉'
+            echo '✅ Build completed successfully!'
         }
         failure {
-            echo 'Build failed. Check the logs for details. ❌'
+            echo '❌ Build failed. Check the logs for details.'
         }
     }
 }
