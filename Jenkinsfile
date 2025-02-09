@@ -1,69 +1,51 @@
 pipeline {
     agent any
 
-    environment {
-        NODE_VERSION = '16' // Desired Node.js version
-    }
-
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'master', url: 'https://github.com/kristiqna-andonova/10-exersic.git'
+                // Pull the code from your repository
+                git 'https://github.com/kristiqna-andonova/10-exersic.git'
             }
         }
 
-        stage('Set Up Node.js') {
+        stage('Set up Node.js') {
             steps {
-                sh '''
-                    curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-                    export NVM_DIR="$HOME/.nvm"
-                    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-                    nvm install 16
-                    nvm use 16
-                '''
+                script {
+                    // Set up Node.js environment (adjust the version as necessary)
+                    def nodeVersion = '14.x'
+                    sh "curl -sL https://deb.nodesource.com/setup_${nodeVersion} | sudo -E bash -"
+                    sh 'sudo apt-get install -y nodejs'
+                }
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh '''
-                    export NVM_DIR="$HOME/.nvm"
-                    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-                    nvm use 16
-                    npm install
-                '''
+                // Install project dependencies
+                sh 'npm install'
             }
         }
 
         stage('Start Application') {
             steps {
-                sh '''
-                    export NVM_DIR="$HOME/.nvm"
-                    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-                    nvm use 16
-                    npm start &
-                '''
+                // Start the application (this could vary depending on your app)
+                sh 'npm start &'
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh '''
-                    export NVM_DIR="$HOME/.nvm"
-                    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-                    nvm use 16
-                    npm test
-                '''
+                // Run the tests for your application
+                sh 'npm test'
             }
         }
     }
 
     post {
-        success {
-            echo '✅ Build completed successfully!'
-        }
-        failure {
-            echo '❌ Build failed. Check the logs for details.'
+        always {
+            // Clean up any processes or resources if needed
+            sh 'killall node' // This stops any background processes
         }
     }
 }
