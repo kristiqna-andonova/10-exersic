@@ -1,51 +1,29 @@
 pipeline {
     agent any
-
-    environment {
-        NODE_VERSION = '14' // Change this to your desired Node.js version
-    }
-
     stages {
-        stage('Checkout Code') {
-            steps {
-                git branch: 'master', url: 'https://github.com/kristiqna-andonova/10-exersic.git'
-            }
-        }
-
-        stage('Set Up Node.js') {
+        stage('Install Dependencies') {
             steps {
                 script {
-                    def nodeHome = tool name: "NodeJS ${NODE_VERSION}", type: "nodejs"
-                    env.PATH = "${nodeHome}/bin:${env.PATH}"
+                    // Use npm to install dependencies
+                    sh 'npm install'
                 }
             }
         }
-
-        stage('Install Dependencies') {
-            steps {
-                sh 'npm install'
-            }
-        }
-
         stage('Start Application') {
             steps {
-                sh 'npm start &'
+                script {
+                    // Start your application (if needed)
+                    sh 'npm start'
+                }
             }
         }
-
         stage('Run Tests') {
             steps {
-                sh 'npm test'
+                script {
+                    // Run tests with npm
+                    sh 'npm test'
+                }
             }
-        }
-    }
-
-    post {
-        success {
-            echo 'Build completed successfully! 🎉'
-        }
-        failure {
-            echo 'Build failed. Check the logs for details. ❌'
         }
     }
 }
