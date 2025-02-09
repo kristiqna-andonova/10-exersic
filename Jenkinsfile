@@ -12,10 +12,8 @@ pipeline {
         stage('Set up Node.js') {
             steps {
                 script {
-                    // Set up Node.js environment (adjust the version as necessary)
-                    def nodeVersion = '14.x'
-                    sh "curl -sL https://deb.nodesource.com/setup_${nodeVersion} | sudo -E bash -"
-                    sh 'sudo apt-get install -y nodejs'
+                    // Ensure Node.js is installed and available
+                    bat 'node -v || exit /b 1'
                 }
             }
         }
@@ -23,29 +21,29 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 // Install project dependencies
-                sh 'npm install'
+                bat 'npm install'
             }
         }
 
         stage('Start Application') {
             steps {
-                // Start the application (this could vary depending on your app)
-                sh 'npm start &'
+                // Start the application
+                bat 'start /B npm start'
             }
         }
 
         stage('Run Tests') {
             steps {
-                // Run the tests for your application
-                sh 'npm test'
+                // Run the tests
+                bat 'npm test'
             }
         }
     }
 
     post {
         always {
-            // Clean up any processes or resources if needed
-            sh 'killall node' // This stops any background processes
+            // Clean up any running Node.js processes if necessary
+            bat 'taskkill /IM node.exe /F || exit 0'
         }
     }
 }
