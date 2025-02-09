@@ -12,33 +12,30 @@ pipeline {
             }
         }
 
-        stage('Set Up Node.js') {
-            steps {
-                script {
-                    def nodeHome = tool name: "NodeJS ${NODE_VERSION}", type: "nodejs"
-                    env.PATH = "${nodeHome}/bin:${env.PATH}"
-                }
-            }
+    stage('Set Up Node.js') {
+        steps {
+            sh 'curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash'
+            sh 'export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" && nvm install 16 && nvm use 16'
         }
 
-        stage('Install Dependencies') {
-            steps {
-                sh 'npm install'
-            }
-        }
-
-        stage('Start Application') {
-            steps {
-                sh 'npm start &'
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                sh 'npm test'
-            }
+    stage('Install Dependencies') {
+        steps {
+            sh 'npm install'
         }
     }
+
+    stage('Start Application') {
+        steps {
+            sh 'npm start &'
+        }
+    }
+
+    stage('Run Tests') {
+        steps {
+            sh 'npm test'
+        }
+    }
+}
 
     post {
         success {
