@@ -19,8 +19,8 @@ pipeline {
             steps {
                 script {
                     // Node.js should already be set up in the tools block above, but we can add a step to verify.
-                    sh 'node -v'  // Verify that Node.js is set up correctly
-                    sh 'npm -v'   // Verify npm version
+                    bat 'node -v'  // Verify that Node.js is set up correctly
+                    bat 'npm -v'   // Verify npm version
                 }
             }
         }
@@ -29,7 +29,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    sh 'npm install'  // This installs the dependencies listed in your package.json
+                    bat 'npm install'  // This installs the dependencies listed in your package.json
                 }
             }
         }
@@ -39,7 +39,7 @@ pipeline {
             steps {
                 script {
                     // Start the app using npm
-                    sh 'npm start'  // Assumes `npm start` will launch the app
+                    bat 'npm start'  // Assumes `npm start` will launch the app
                 }
             }
         }
@@ -49,7 +49,7 @@ pipeline {
             steps {
                 script {
                     // Run your tests, assuming you are using npm test
-                    sh 'npm test'  // This runs the tests defined in your package.json
+                    bat 'npm test'  // This runs the tests defined in your package.json
                 }
             }
         }
