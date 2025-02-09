@@ -2,67 +2,50 @@ pipeline {
     agent any
 
     environment {
-        NODE_VERSION = '22.13.1'
+        NODE_VERSION = '22.13.1' // Change this to your desired Node.js version
     }
 
     stages {
         stage('Checkout Code') {
             steps {
-                // Checkout the code from the repository
-                checkout scm
+                git branch: 'master', url: 'https://github.com/kristiqna-andonova/10-exersic.git'
             }
         }
 
-        stage('Set up Node.js') {
+        stage('Set Up Node.js') {
             steps {
-                // Set up Node.js 14
                 script {
-                    sh 'curl -sL https://deb.nodesource.com/setup_22.x | bash -'
-                    sh 'sudo apt-get install -y nodejs'
+                    def nodeHome = tool name: "NodeJS ${NODE_VERSION}", type: "nodejs"
+                    env.PATH = "${nodeHome}/bin:${env.PATH}"
                 }
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                // Install project dependencies
-                script {
-                    sh 'npm install'
-                }
+                sh 'npm install'
             }
         }
 
         stage('Start Application') {
             steps {
-                // Start the application (you can change this as per your app's start command)
-                script {
-                    sh 'npm start &'
-                }
+                sh 'npm start &'
             }
         }
 
         stage('Run Tests') {
             steps {
-                // Run tests
-                script {
-                    sh 'npm test'
-                }
+                sh 'npm test'
             }
         }
     }
 
     post {
-        always {
-            // Clean up after the build, if necessary
-            echo 'Cleaning up...'
-        }
-
         success {
-            echo 'Build and tests succeeded!'
+            echo 'Build completed successfully! 🎉'
         }
-
         failure {
-            echo 'Build or tests failed.'
+            echo 'Build failed. Check the logs for details. ❌'
         }
     }
 }
