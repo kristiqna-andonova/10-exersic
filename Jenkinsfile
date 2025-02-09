@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        NODE_VERSION = '14'
+        NODE_VERSION = '22.13.1'
     }
 
     stages {
@@ -17,7 +17,7 @@ pipeline {
             steps {
                 // Set up Node.js 14
                 script {
-                    sh 'curl -sL https://deb.nodesource.com/setup_14.x | bash -'
+                    sh 'curl -sL https://deb.nodesource.com/setup_22.x | bash -'
                     sh 'sudo apt-get install -y nodejs'
                 }
             }
