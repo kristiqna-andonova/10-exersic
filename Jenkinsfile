@@ -1,20 +1,23 @@
 pipeline {
     agent any
 
+    environment {
+        NODE_VERSION = '14'
+    }
+
     stages {
         stage('Checkout Code') {
             steps {
-                // Pull the code from your repository
-                git 'https://github.com/kristiqna-andonova/10-exersic.git'
+                // Checkout the code from the repository
+                checkout scm
             }
         }
 
         stage('Set up Node.js') {
             steps {
+                // Set up Node.js 14
                 script {
-                    // Set up Node.js environment (adjust the version as necessary)
-                    def nodeVersion = '14.x'
-                    sh "curl -sL https://deb.nodesource.com/setup_${nodeVersion} | sudo -E bash -"
+                    sh 'curl -sL https://deb.nodesource.com/setup_14.x | bash -'
                     sh 'sudo apt-get install -y nodejs'
                 }
             }
@@ -23,29 +26,43 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 // Install project dependencies
-                sh 'npm install'
+                script {
+                    sh 'npm install'
+                }
             }
         }
 
         stage('Start Application') {
             steps {
-                // Start the application (this could vary depending on your app)
-                sh 'npm start &'
+                // Start the application (you can change this as per your app's start command)
+                script {
+                    sh 'npm start &'
+                }
             }
         }
 
         stage('Run Tests') {
             steps {
-                // Run the tests for your application
-                sh 'npm test'
+                // Run tests
+                script {
+                    sh 'npm test'
+                }
             }
         }
     }
 
     post {
         always {
-            // Clean up any processes or resources if needed
-            sh 'killall node' // This stops any background processes
+            // Clean up after the build, if necessary
+            echo 'Cleaning up...'
+        }
+
+        success {
+            echo 'Build and tests succeeded!'
+        }
+
+        failure {
+            echo 'Build or tests failed.'
         }
     }
 }
